@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta name="robots" content="noindex,nofollow,noarchive" />
+<meta name="theme-color" content="#050505" />
+<title>BLCKOUT • 31 OUT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@400;500;600;700&family=Creepster&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#050505; --ink:#0a0a0c; --card:#0e0d0a;
+    --gold:#f5a800; --gold-hi:#ffc233; --gold-dim:rgba(245,168,0,.25);
+    --text:#f3e9d2; --muted:#a79a7c; --danger:#ff4d3d;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;background:var(--bg);color:var(--text);font-family:'Barlow Condensed',system-ui,sans-serif;font-size:18px;overscroll-behavior-y:none}
+  body{min-height:100dvh;overflow-x:hidden}
+  button{font:inherit;color:inherit;cursor:pointer}
+  input{font:inherit}
+
+  /* ---------- fundo: luz da janela + grão ---------- */
+  .bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:var(--bg)}
+  .bg .glow{position:absolute;left:50%;top:6vh;width:130vw;height:60vh;transform:translateX(-50%);
+    background:radial-gradient(50% 50% at 50% 50%,rgba(245,168,0,.34),rgba(245,168,0,.10) 55%,transparent 75%)}
+  .bg .window{position:absolute;left:50%;top:0;width:150vw;height:100dvh;transform:translateX(-50%) skewX(-7deg);
+    background:linear-gradient(90deg,transparent 0 10%,rgba(245,168,0,.07) 10% 47%,transparent 47% 53%,rgba(245,168,0,.07) 53% 90%,transparent 90%);
+    -webkit-mask-image:linear-gradient(180deg,#000 10%,transparent 85%);mask-image:linear-gradient(180deg,#000 10%,transparent 85%)}
+  .grain{position:fixed;inset:0;z-index:60;pointer-events:none;opacity:.16;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+  .decor{position:fixed;inset:0;z-index:1;pointer-events:none}
+  .web{position:absolute;top:0;width:min(32vw,230px);height:auto;opacity:.6}
+  .web.l{left:0}.web.r{right:0;transform:scaleX(-1)}
+
+  /* ---------- layout ---------- */
+  .wrap{position:relative;z-index:2;max-width:760px;margin:0 auto;padding:max(18px,env(safe-area-inset-top)) 16px 90px}
+  header{text-align:center;padding:34px 0 14px;position:relative;z-index:3}
+  .logo{display:inline-block;line-height:.9;user-select:none;-webkit-user-select:none}
+  .logo .t{font-family:'Anton',Impact,sans-serif;font-size:clamp(54px,19vw,128px);letter-spacing:.01em;text-transform:uppercase;display:block;white-space:nowrap}
+  .logo .blck{color:#000;text-shadow:0 0 1px #f5a800,0 0 22px rgba(245,168,0,.55),0 2px 0 rgba(245,168,0,.35)}
+  .logo .out{color:var(--gold);text-shadow:0 0 28px rgba(245,168,0,.45)}
+  .date{font-family:'Creepster',cursive;color:var(--gold);font-size:clamp(34px,10vw,54px);line-height:.95;margin-top:10px;letter-spacing:.04em;text-shadow:0 0 14px rgba(245,168,0,.4)}
+  .tag{position:relative;z-index:3;color:var(--muted);margin:14px 0 0;font-size:19px;letter-spacing:.04em}
+
+  .card{display:block;position:relative;background:linear-gradient(180deg,#15120a,#0b0a07);border:1px solid rgba(245,168,0,.42);border-radius:16px;padding:16px;margin-top:30px;box-shadow:0 18px 30px -22px rgba(0,0,0,.95),inset 0 1px 0 rgba(255,194,51,.12),inset 0 0 36px rgba(245,168,0,.05)}
+  label.l{display:block;font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+  .inp{width:100%;background:#050504;border:1px solid var(--gold-dim);color:var(--text);border-radius:10px;padding:13px 14px;font-size:19px;outline:none;transition:border .2s,box-shadow .2s}
+  .inp:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(245,168,0,.18)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:12px;padding:14px 18px;font-family:'Anton',sans-serif;letter-spacing:.09em;text-transform:uppercase;font-size:18px;background:var(--gold);color:#000;box-shadow:0 0 22px rgba(245,168,0,.35);transition:transform .12s,filter .2s,opacity .2s}
+  .btn:active{transform:scale(.97)}
+  .btn:disabled{opacity:.45;box-shadow:none;cursor:not-allowed}
+  .btn.ghost{background:transparent;color:var(--gold);border:1px solid var(--gold);box-shadow:none}
+  .btn.danger{background:var(--danger);color:#fff;box-shadow:0 0 18px rgba(255,77,61,.3)}
+  .btn.sm{padding:8px 12px;font-size:14px;border-radius:9px}
+  .btn.block{width:100%}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .hint{color:var(--muted);font-size:15px;margin:10px 0 0;line-height:1.25}
+  .err{color:var(--danger);font-size:16px;margin:8px 0 0}
+
+  .prev{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px;margin:14px 0 4px}
+  .prev .p{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;border:1px solid var(--gold-dim);background:#000}
+  .prev .p img,.prev .p video{width:100%;height:100%;object-fit:cover;display:block}
+  .prev .x{position:absolute;top:4px;right:4px;width:26px;height:26px;border-radius:50%;border:0;background:rgba(0,0,0,.75);color:var(--gold);font-size:16px;line-height:1}
+  .prev .st{position:absolute;inset:auto 0 0 0;background:rgba(0,0,0,.72);font-size:13px;text-align:center;padding:2px;color:var(--gold-hi)}
+  .bar{height:6px;background:#1a1608;border-radius:6px;overflow:hidden;margin-top:12px}
+  .bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-hi));transition:width .3s}
+
+  h2.sec{font-family:'Anton',sans-serif;font-weight:400;letter-spacing:.1em;text-transform:uppercase;font-size:22px;color:var(--gold);margin:34px 0 0;display:flex;align-items:center;gap:10px}
+  h2.sec::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--gold-dim),transparent)}
+
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}
+  @media(min-width:560px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+  .it{aspect-ratio:1/1;position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--gold-dim);background:#000;cursor:pointer}
+  .it img,.it video{width:100%;height:100%;display:block;object-fit:cover}
+  .it .meta{position:absolute;inset:auto 0 0 0;padding:22px 9px 7px;background:linear-gradient(0deg,rgba(0,0,0,.9),transparent);font-size:14px;display:flex;justify-content:space-between;gap:6px;align-items:flex-end}
+  .it .meta b{font-weight:600;color:var(--gold-hi);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .it .play{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.65);border:1px solid var(--gold);color:var(--gold);border-radius:50%;width:30px;height:30px;display:grid;place-items:center;font-size:12px}
+  .empty{text-align:center;color:var(--muted);padding:44px 10px;border:1px dashed var(--gold-dim);border-radius:14px;margin-top:14px}
+
+  /* ---------- lightbox ---------- */
+  .lb{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.94);display:flex;flex-direction:column}
+  .lb .top{display:flex;justify-content:space-between;align-items:center;padding:calc(10px + env(safe-area-inset-top)) 14px 8px}
+  .lb .who{color:var(--gold-hi);font-weight:600;font-size:20px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .lb .stage{flex:1;min-height:0;display:grid;place-items:center;position:relative;padding:0 8px}
+  .lb .stage img,.lb .stage video{max-width:100%;max-height:100%;border-radius:10px;box-shadow:0 0 60px rgba(245,168,0,.18)}
+  .lb .nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.55);border:1px solid var(--gold-dim);color:var(--gold);border-radius:50%;width:42px;height:42px;font-size:20px}
+  .lb .nav.p{left:8px}.lb .nav.n{right:8px}
+  .lb .bot{padding:10px 12px calc(14px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:10px}
+  .reacts{display:flex;gap:8px;justify-content:center}
+  .rx{background:#0d0b05;border:1px solid var(--gold-dim);border-radius:999px;padding:7px 13px;font-size:20px;display:flex;gap:6px;align-items:center;transition:all .15s}
+  .rx span{font-size:16px;color:var(--gold-hi);min-width:1ch}
+  .rx.on{background:rgba(245,168,0,.18);border-color:var(--gold);box-shadow:0 0 14px rgba(245,168,0,.35)}
+  .lb .acts{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+
+  .toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:80;background:var(--gold);color:#000;padding:11px 18px;border-radius:999px;font-family:'Anton',sans-serif;letter-spacing:.06em;box-shadow:0 0 30px rgba(245,168,0,.5);max-width:92vw;text-align:center}
+  .center{min-height:100dvh;display:grid;place-items:center;text-align:center;padding:24px;position:relative;z-index:2}
+
+  /* ---------- admin ---------- */
+  .adm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-top:14px}
+  .adm{border:1px solid var(--gold-dim);border-radius:12px;overflow:hidden;background:#080705}
+  .adm .th{aspect-ratio:1;position:relative;background:#000}
+  .adm .th img,.adm .th video{width:100%;height:100%;object-fit:cover}
+  .adm .b{padding:8px;font-size:14px;display:flex;flex-direction:column;gap:6px}
+  .badge{position:absolute;top:6px;left:6px;background:var(--danger);color:#fff;border-radius:6px;padding:2px 7px;font-size:13px;font-weight:700}
+  .badge.h{left:auto;right:6px;background:#333;color:var(--gold)}
+  .tabs{display:flex;gap:8px;margin-top:16px}
+  .pin{letter-spacing:.7em;text-align:center;font-size:26px}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="module">
+import React,{useState,useEffect,useRef,useCallback,useMemo} from 'https://esm.sh/react@18.3.1';
+import {createRoot} from 'https://esm.sh/react-dom@18.3.1/client?deps=react@18.3.1';
+import {motion,AnimatePresence,useReducedMotion} from 'https://esm.sh/framer-motion@11.11.17?deps=react@18.3.1,react-dom@18.3.1';
+import htm from 'https://esm.sh/htm@3.1.1';
+import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.45.4';
+
+const html = htm.bind(React.createElement);
+
+/* =====================  CONFIG  ===================== */
+const CFG = {
+  SUPABASE_URL: 'https://ukaijceupuhuhrxtnklq.supabase.co',
+  SUPABASE_ANON_KEY: 'sb_publishable_CIbO__xowto2fgF1Ts7zlg_BDcVL75n',
+  BUCKET: 'blckout-media',
+};
+const CONFIGURED = /^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(CFG.SUPABASE_URL) && !/COLE|AQUI/.test(CFG.SUPABASE_ANON_KEY) && CFG.SUPABASE_ANON_KEY.length > 20;
+
+/* =====================  REGRAS DE UPLOAD  ===================== */
+const MB = 1024 * 1024;
+const MIME = {
+  'image/jpeg': { ext: 'jpg',  kind: 'image' },
+  'image/png':  { ext: 'png',  kind: 'image' },
+  'image/webp': { ext: 'webp', kind: 'image' },
+  'video/mp4':  { ext: 'mp4',  kind: 'video' },
+  'video/quicktime': { ext: 'mov', kind: 'video' },
+};
+const MAX_BYTES = { image: 10 * MB, video: 30 * MB };
+const MAX_BATCH = 5;
+const COOLDOWN_S = 15;
+const EMOJI = { pumpkin: '🎃', ghost: '👻', bat: '🦇', fire: '🔥' };
+
+/* =====================  UTIL  ===================== */
+const cleanName = s => (s || '')
+  .normalize('NFKC')
+  .replace(/<[^>]*>/g, '')
+  .replace(/[<>"`&\\]/g, '')
+  .replace(/[\u0000-\u001F\u007F]/g, '')
+  .replace(/\s+/g, ' ')
+  .trim()
+  .slice(0, 40) || 'Anônimo';
+
+// Confere os "magic bytes": não confia na extensão nem no type informado pelo navegador
+async function sniff(file) {
+  const b = new Uint8Array(await file.slice(0, 16).arrayBuffer());
+  const s = (o, t) => [...t].every((c, i) => b[o + i] === c.charCodeAt(0));
+  if (b[0] === 0xFF && b[1] === 0xD8 && b[2] === 0xFF) return 'image/jpeg';
+  if (b[0] === 0x89 && s(1, 'PNG')) return 'image/png';
+  if (s(0, 'RIFF') && s(8, 'WEBP')) return 'image/webp';
+  if (s(4, 'ftyp')) return s(8, 'qt') ? 'video/quicktime' : 'video/mp4';
+  return null;
+}
+
+const ls = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+};
+const ss = {
+  get(k) { try { return sessionStorage.getItem(k) || ''; } catch { return ''; } },
+  set(k, v) { try { sessionStorage.setItem(k, v); } catch {} },
+};
+
+// Token do QR Code -> sessionStorage -> removido da URL
+(() => {
+  const t = new URLSearchParams(location.search).get('token');
+  if (t) {
+    ss.set('blckout_token', t.slice(0, 100));
+    history.replaceState(null, '', location.pathname + location.hash);
+  }
+})();
+const getToken = () => ss.get('blckout_token');
+
+const makeClient = (extra = {}) => createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY, {
+  auth: { persistSession: false, autoRefreshToken: false },
+  global: { headers: { 'x-event-token': getToken(), ...extra } },
+});
+
+/* =====================  DECORAÇÃO  ===================== */
+const Web = ({ cls }) => {
+  const R = [...Array(7)].map((_, i) => (i * 15 * Math.PI) / 180);
+  let d = '';
+  R.forEach(a => { d += `M0 0L${(200 * Math.cos(a)).toFixed(1)} ${(200 * Math.sin(a)).toFixed(1)}`; });
+  [38, 72, 110, 152, 200].forEach(r => {
+    const p = R.map(a => [r * Math.cos(a), r * Math.sin(a)]);
+    for (let i = 0; i < p.length - 1; i++) {
+      const m = [(p[i][0] + p[i + 1][0]) / 2 * 0.8, (p[i][1] + p[i + 1][1]) / 2 * 0.8];
+      d += `M${p[i][0].toFixed(1)} ${p[i][1].toFixed(1)}Q${m[0].toFixed(1)} ${m[1].toFixed(1)} ${p[i + 1][0].toFixed(1)} ${p[i + 1][1].toFixed(1)}`;
+    }
+  });
+  return html`<svg class=${'web ' + cls} viewBox="0 0 200 200" fill="none" stroke="#f5a800" stroke-width="1"><path d=${d}/></svg>`;
+};
+
+const BAT_D = 'M0 0C-6-8-18-10-30-4C-24-2-22 2-18 6C-14 2-10 2-6 6C-3 3-1 5 0 9C1 5 3 3 6 6C10 2 14 2 18 6C22 2 24-2 30-4C18-10 6-8 0 0Z';
+const Bat = ({ x, y, s, delay }) => {
+  const reduce = useReducedMotion();
+  return html`<${motion.svg} viewBox="-34 -14 68 28" width=${s} style=${{ position: 'absolute', left: x, top: y, fill: '#f5a800', opacity: .55 }}
+    animate=${reduce ? {} : { y: [0, -10, 4, 0], x: [0, 8, -6, 0], scaleY: [1, .8, 1] }}
+    transition=${{ duration: 4.5, repeat: Infinity, delay, ease: 'easeInOut' }}><path d=${BAT_D}/><//>`;
+};
+
+const Spider = () => {
+  const reduce = useReducedMotion();
+  return html`<${motion.div} style=${{ position: 'absolute', right: '5%', top: 0, transformOrigin: 'top center' }}
+    animate=${reduce ? {} : { rotate: [-5, 5, -5] }} transition=${{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}>
+    <svg width="34" height="150" viewBox="0 0 34 150" fill="none" stroke="#f5a800" stroke-linecap="round">
+      <line x1="17" y1="0" x2="17" y2="112" stroke-width="1"/>
+      <g stroke-width="1.6">
+        <path d="M17 120L6 112L2 122M17 120L5 120L1 132M17 124L7 130L5 142"/>
+        <path d="M17 120L28 112L32 122M17 120L29 120L33 132M17 124L27 130L29 142"/>
+      </g>
+      <ellipse cx="17" cy="127" rx="7" ry="9" fill="#f5a800" stroke="none"/>
+      <circle cx="17" cy="116" r="4.5" fill="#f5a800" stroke="none"/>
+    </svg>
+  <//>`;
+};
+
+const Decor = () => html`
+  <div class="bg"><div class="glow"></div><div class="window"></div></div>
+  <div class="decor">
+    <${Web} cls="l"/><${Web} cls="r"/>
+    <${Bat} x="10%" y="9vh" s=${62} delay=${0}/>
+    <${Bat} x="30%" y="15vh" s=${44} delay=${1.2}/>
+    <${Bat} x="76%" y="7vh" s=${34} delay=${.6}/>
+    <${Bat} x="6%" y="24vh" s=${30} delay=${2}/>
+    <${Spider}/>
+  </div>
+  <div class="grain"></div>`;
+
+const Logo = ({ onSecret }) => {
+  const taps = useRef({ n: 0, t: 0 });
+  const tap = () => {
+    const now = Date.now();
+    taps.current = { n: now - taps.current.t < 1500 ? taps.current.n + 1 : 1, t: now };
+    if (taps.current.n >= 5) { taps.current.n = 0; onSecret(); }
+  };
+  return html`<header>
+    <${motion.div} class="logo" onClick=${tap} initial=${{ opacity: 0, y: 14, filter: 'blur(8px)' }} animate=${{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition=${{ duration: .9 }}>
+      <span class="t"><span class="blck">BLCK</span><span class="out">OUT</span></span>
+      <div class="date">31<br/>OUT</div>
+    <//>
+    <p class="tag">Poste a noite. Reaja. Sobreviva.</p>
+  </header>`;
+};
+
+/* =====================  TOAST  ===================== */
+const Toast = ({ msg }) => html`<${AnimatePresence}>${msg && html`
+  <${motion.div} key=${msg} class="toast" initial=${{ opacity: 0, y: 20 }} animate=${{ opacity: 1, y: 0 }} exit=${{ opacity: 0, y: 20 }}>${msg}<//>`}<//>`;
+
+/* =====================  UPLOAD  ===================== */
+function UploadCard({ sb, onDone, toast }) {
+  const [name, setName] = useState(() => ls.get('blckout_name', ''));
+  const [files, setFiles] = useState([]);
+  const [busy, setBusy] = useState(false);
+  const [prog, setProg] = useState(0);
+  const [err, setErr] = useState('');
+  const [until, setUntil] = useState(() => Number(ss.get('blckout_cd')) || 0);
+  const [now, setNow] = useState(Date.now());
+  const input = useRef();
+
+  useEffect(() => { const i = setInterval(() => setNow(Date.now()), 500); return () => clearInterval(i); }, []);
+  const left = Math.max(0, Math.ceil((until - now) / 1000));
+
+  const pick = async e => {
+    setErr('');
+    const picked = [...e.target.files];
+    e.target.value = '';
+    const room = MAX_BATCH - files.length;
+    const problems = [];
+    if (picked.length > room) problems.push(`Máximo de ${MAX_BATCH} arquivos por envio.`);
+    const ok = [];
+    for (const f of picked.slice(0, Math.max(0, room))) {
+      const mime = await sniff(f);
+      if (!mime || !MIME[mime]) { problems.push(`${f.name.slice(0, 24)}: formato não permitido.`); continue; }
+      if (f.type && !MIME[f.type]) { problems.push(`${f.name.slice(0, 24)}: formato não permitido.`); continue; }
+      const { kind, ext } = MIME[mime];
+      if (f.size > MAX_BYTES[kind]) { problems.push(`${f.name.slice(0, 24)}: passa de ${MAX_BYTES[kind] / MB}MB.`); continue; }
+      ok.push({ id: crypto.randomUUID(), file: f, mime, kind, ext, preview: URL.createObjectURL(f), st: '' });
+    }
+    setFiles(p => [...p, ...ok]);
+    if (problems.length) setErr(problems.join(' '));
+  };
+
+  const remove = id => setFiles(p => { p.filter(x => x.id === id).forEach(x => URL.revokeObjectURL(x.preview)); return p.filter(x => x.id !== id); });
+
+  const send = async () => {
+    if (busy || !files.length || left > 0) return;
+    setBusy(true); setErr(''); setProg(0);
+    const author = cleanName(name);
+    ls.set('blckout_name', name.slice(0, 40));
+    let okCount = 0;
+    for (let i = 0; i < files.length; i++) {
+      const f = files[i];
+      setFiles(p => p.map(x => x.id === f.id ? { ...x, st: 'enviando…' } : x));
+      const path = `${crypto.randomUUID()}.${f.ext}`;      // nome aleatório: sem sobrescrita / path traversal
+      const up = await sb.storage.from(CFG.BUCKET).upload(path, f.file, { contentType: f.mime, cacheControl: '31536000', upsert: false });
+      if (up.error) { setFiles(p => p.map(x => x.id === f.id ? { ...x, st: 'erro' } : x)); setErr('Falha no envio de um arquivo. Tente de novo.'); continue; }
+      const url = sb.storage.from(CFG.BUCKET).getPublicUrl(path).data.publicUrl;
+      const ins = await sb.from('media').insert({ url, storage_path: path, type: f.kind, author_name: author });
+      if (ins.error) { setFiles(p => p.map(x => x.id === f.id ? { ...x, st: 'erro' } : x)); setErr('Não foi possível registrar um arquivo.'); continue; }
+      okCount++;
+      setFiles(p => p.map(x => x.id === f.id ? { ...x, st: '✓' } : x));
+      setProg(Math.round(((i + 1) / files.length) * 100));
+    }
+    setBusy(false);
+    if (okCount) {
+      files.forEach(x => URL.revokeObjectURL(x.preview));
+      setFiles([]);
+      const u = Date.now() + COOLDOWN_S * 1000;
+      setUntil(u); ss.set('blckout_cd', String(u));
+      toast(okCount > 1 ? `${okCount} mídias enviadas 🎃` : 'Enviado 🎃');
+      onDone();
+    }
+  };
+
+  return html`<${motion.section} class="card" initial=${{ opacity: 0, y: 18 }} animate=${{ opacity: 1, y: 0 }} transition=${{ delay: .25 }}>
+    <label class="l" for="nm">Seu nome / Instagram</label>
+    <input id="nm" class="inp" maxlength="40" autocomplete="nickname" placeholder="@seuinsta" value=${name} onInput=${e => setName(e.target.value)} />
+
+    <div class="row" style=${{ marginTop: 14 }}>
+      <button class="btn block" disabled=${busy || files.length >= MAX_BATCH} onClick=${() => input.current.click()}>＋ Adicionar fotos / vídeos</button>
+    </div>
+    <input ref=${input} type="file" multiple hidden accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime" onChange=${pick}/>
+    <p class="hint">Até ${MAX_BATCH} por envio • fotos até 10MB • vídeos até 30MB</p>
+    ${err && html`<p class="err">${err}</p>`}
+
+    ${files.length > 0 && html`<div class="prev">${files.map(f => html`
+      <div class="p" key=${f.id}>
+        ${f.kind === 'image' ? html`<img src=${f.preview} alt=""/>` : html`<video src=${f.preview + '#t=0.1'} muted playsinline preload="metadata"></video>`}
+        ${!busy && html`<button class="x" onClick=${() => remove(f.id)} aria-label="remover">×</button>`}
+        ${f.st && html`<div class="st">${f.st}</div>`}
+      </div>`)}</div>`}
+
+    ${busy && html`<div class="bar"><i style=${{ width: prog + '%' }}></i></div>`}
+
+    ${files.length > 0 && html`<button class="btn block" style=${{ marginTop: 14 }} disabled=${busy || left > 0} onClick=${send}>
+      ${busy ? 'Enviando…' : left > 0 ? `Aguarde ${left}s` : `Enviar ${files.length} ${files.length > 1 ? 'arquivos' : 'arquivo'}`}
+    </button>`}
+    ${files.length === 0 && left > 0 && html`<p class="hint">Novo envio liberado em ${left}s 🦇</p>`}
+  <//>`;
+}
+
+/* =====================  LIGHTBOX  ===================== */
+function Lightbox({ items, index, setIndex, onClose, sb, setItems, toast }) {
+  const m = items[index];
+  const [reacted, setReacted] = useState(() => ls.get('blckout_reacted', {}));
+  const [reported, setReported] = useState(() => ls.get('blckout_reported', []));
+  const [confirm, setConfirm] = useState(false);
+
+  useEffect(() => { setConfirm(false); }, [index]);
+  useEffect(() => {
+    const k = e => {
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowRight') setIndex(i => Math.min(items.length - 1, i + 1));
+      if (e.key === 'ArrowLeft') setIndex(i => Math.max(0, i - 1));
+    };
+    addEventListener('keydown', k);
+    document.body.style.overflow = 'hidden';
+    return () => { removeEventListener('keydown', k); document.body.style.overflow = ''; };
+  }, [items.length]);
+
+  if (!m) return null;
+  const mine = reacted[m.id] || [];
+
+  const react = async key => {
+    if (mine.includes(key)) return;
+    const next = { ...reacted, [m.id]: [...mine, key] };
+    setReacted(next); ls.set('blckout_reacted', next);
+    setItems(p => p.map(x => x.id === m.id ? { ...x, reactions: { ...x.reactions, [key]: (x.reactions[key] || 0) + 1 } } : x));
+    const { error } = await sb.rpc('add_reaction', { media_id: m.id, reaction_type: key });
+    if (error) toast('Não foi possível reagir');
+  };
+
+  const report = async () => {
+    if (!confirm) { setConfirm(true); return; }
+    const { error } = await sb.rpc('report_media', { media_id: m.id });
+    if (error) { toast('Erro ao denunciar'); return; }
+    const r = [...reported, m.id]; setReported(r); ls.set('blckout_reported', r);
+    setConfirm(false); toast('Denúncia enviada');
+  };
+
+  const dl = async () => {
+    try {
+      const b = await (await fetch(m.url)).blob();
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(b);
+      a.download = 'blckout-' + m.id.slice(0, 8) + '.' + m.url.split('.').pop();
+      a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    } catch { window.open(m.url, '_blank', 'noopener'); }
+  };
+
+  return html`<${motion.div} class="lb" initial=${{ opacity: 0 }} animate=${{ opacity: 1 }} exit=${{ opacity: 0 }}>
+    <div class="top"><span class="who">${m.author_name || 'Anônimo'}</span><button class="btn ghost sm" onClick=${onClose}>Fechar ✕</button></div>
+    <div class="stage">
+      <${AnimatePresence} mode="wait">
+        <${motion.div} key=${m.id} initial=${{ opacity: 0, scale: .96 }} animate=${{ opacity: 1, scale: 1 }} exit=${{ opacity: 0, scale: .98 }} transition=${{ duration: .2 }} style=${{ maxHeight: '100%', maxWidth: '100%', display: 'grid', placeItems: 'center' }}
+          drag="x" dragConstraints=${{ left: 0, right: 0 }} dragElastic=${.35}
+          onDragEnd=${(_, i) => { if (i.offset.x < -80) setIndex(v => Math.min(items.length - 1, v + 1)); else if (i.offset.x > 80) setIndex(v => Math.max(0, v - 1)); }}>
+          ${m.type === 'video'
+            ? html`<video src=${m.url} controls autoplay playsinline loop style=${{ maxHeight: '64dvh' }}></video>`
+            : html`<img src=${m.url} alt=${'Foto de ' + (m.author_name || 'Anônimo')} style=${{ maxHeight: '64dvh' }} draggable="false"/>`}
+        <//>
+      <//>
+      ${index > 0 && html`<button class="nav p" onClick=${() => setIndex(index - 1)} aria-label="anterior">‹</button>`}
+      ${index < items.length - 1 && html`<button class="nav n" onClick=${() => setIndex(index + 1)} aria-label="próxima">›</button>`}
+    </div>
+    <div class="bot">
+      <div class="reacts">${Object.entries(EMOJI).map(([k, e]) => html`
+        <button key=${k} class=${'rx' + (mine.includes(k) ? ' on' : '')} onClick=${() => react(k)}>${e}<span>${m.reactions?.[k] || 0}</span></button>`)}</div>
+      <div class="acts">
+        <button class="btn ghost sm" onClick=${dl}>⬇ Baixar</button>
+        ${reported.includes(m.id)
+          ? html`<button class="btn ghost sm" disabled>Denunciada</button>`
+          : html`<button class=${'btn sm ' + (confirm ? 'danger' : 'ghost')} onClick=${report}>${confirm ? 'Confirmar denúncia' : '⚑ Denunciar mídia'}</button>`}
+      </div>
+    </div>
+  <//>`;
+}
+
+/* =====================  GALERIA  ===================== */
+function Gallery({ items, loading, open }) {
+  if (loading) return html`<div class="empty">Invocando as memórias…</div>`;
+  if (!items.length) return html`<div class="empty">A escuridão está vazia.<br/>Seja o primeiro a postar. 🦇</div>`;
+  return html`<div class="grid">${items.map((m, i) => html`
+    <${motion.div} key=${m.id} class="it" initial=${{ opacity: 0, y: 14 }} animate=${{ opacity: 1, y: 0 }} transition=${{ duration: .35, delay: Math.min(i, 8) * .04 }} onClick=${() => open(i)}>
+      ${m.type === 'video'
+        ? html`<video src=${m.url + '#t=0.1'} muted playsinline preload="metadata"></video><span class="play">▶</span>`
+        : html`<img src=${m.url} loading="lazy" alt=${'Foto de ' + (m.author_name || 'Anônimo')}/>`}
+      <div class="meta"><b>${m.author_name || 'Anônimo'}</b><span>${Object.values(m.reactions || {}).reduce((a, b) => a + (b || 0), 0)} 🎃</span></div>
+    <//>`)}</div>`;
+}
+
+/* =====================  APP DE CONVIDADO  ===================== */
+function Guest({ goAdmin }) {
+  const [access, setAccess] = useState(!CONFIGURED ? 'setup' : 'checking');
+  const sb = useMemo(() => (CONFIGURED ? makeClient() : null), []);
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [idx, setIdx] = useState(null);
+  const [msg, setMsg] = useState('');
+  const [errMsg, setErrMsg] = useState('');
+  const toast = useCallback(t => { setMsg(t); setTimeout(() => setMsg(''), 2400); }, []);
+
+  const load = useCallback(async () => {
+    const { data, error } = await sb.from('media').select('id,created_at,url,type,author_name,reactions').order('created_at', { ascending: false }).limit(300);
+    if (!error && data) setItems(prev => {
+      // mantém contagens otimistas locais quando o servidor ainda não refletiu
+      return data;
+    });
+    setLoading(false);
+  }, [sb]);
+
+  useEffect(() => {
+    if (!sb) return;
+    (async () => {
+      if (!getToken()) { setAccess('denied'); return; }
+      const { data, error } = await sb.rpc('check_token');
+      if (error) { setErrMsg(error.message || 'sem resposta do servidor'); setAccess('error'); return; }
+      if (data !== true) { setAccess('denied'); return; }
+      setAccess('ok'); load();
+    })();
+  }, [sb]);
+
+  useEffect(() => {
+    if (access !== 'ok') return;
+    const i = setInterval(() => { if (document.visibilityState === 'visible' && idx === null) load(); }, 15000);
+    return () => clearInterval(i);
+  }, [access, idx, load]);
+
+  if (access === 'setup') return html`<${Decor}/><div class="center"><div class="card"><div class="date" style=${{ fontSize: 34 }}>Falta configurar</div><p class="hint">Edite o bloco CFG no index.html com a URL e a anon key do seu projeto Supabase.</p></div></div>`;
+  if (access === 'error') return html`<${Decor}/><div class="center"><div class="card" style=${{ maxWidth: 420 }}>
+    <div class="date" style=${{ fontSize: 34, marginTop: 0 }}>SEM CONEXÃO</div>
+    <p class="hint">Não consegui falar com o Supabase. Confira a URL e a chave (anon/publishable) no bloco CFG do index.html e se o SQL foi executado.</p>
+    <p class="err">${errMsg}</p></div></div>`;
+  if (access === 'checking') return html`<${Decor}/><div class="center"><div class="date">…</div></div>`;
+  if (access === 'denied') return html`<${Decor}/><div class="center"><${motion.div} initial=${{ opacity: 0, y: 12 }} animate=${{ opacity: 1, y: 0 }}>
+    <div class="logo"><span class="t"><span class="blck">BLCK</span><span class="out">OUT</span></span></div>
+    <div class="date" style=${{ marginTop: 18 }}>ACESSO<br/>NEGADO</div>
+    <p class="tag">Escaneie o QR Code da festa para entrar.</p><//></div>`;
+
+  return html`<${Decor}/>
+    <main class="wrap">
+      <${Logo} onSecret=${goAdmin}/>
+      <${UploadCard} sb=${sb} onDone=${load} toast=${toast}/>
+      <h2 class="sec">Galeria da noite</h2>
+      <${Gallery} items=${items} loading=${loading} open=${setIdx}/>
+      <p class="hint" style=${{ textAlign: 'center', marginTop: 28, opacity: .5 }}>BLCKOUT • 31 OUT • v3</p>
+    </main>
+    <${AnimatePresence}>${idx !== null && html`<${Lightbox} key="lb" items=${items} index=${idx} setIndex=${setIdx} onClose=${() => { setIdx(null); }} sb=${sb} setItems=${setItems} toast=${toast}/>`}<//>
+    <${Toast} msg=${msg}/>`;
+}
+
+/* =====================  ADMIN  ===================== */
+function Admin({ leave }) {
+  const [pin, setPin] = useState('');
+  const [sb, setSb] = useState(null);
+  const [err, setErr] = useState('');
+  const [items, setItems] = useState([]);
+  const [tab, setTab] = useState('rep');
+  const [msg, setMsg] = useState('');
+  const [zip, setZip] = useState('');
+  const toast = t => { setMsg(t); setTimeout(() => setMsg(''), 2600); };
+
+  const login = async e => {
+    e.preventDefault(); setErr('');
+    if (!CONFIGURED) { setErr('Configure o Supabase no index.html'); return; }
+    if (!/^\d{6}$/.test(pin)) { setErr('O PIN tem 6 dígitos'); return; }
+    const c = makeClient({ 'x-admin-pin': pin });
+    const { data, error } = await c.rpc('admin_check');
+    if (error || data !== true) { setErr('PIN incorreto'); setPin(''); return; }
+    setSb(c);
+  };
+
+  const load = useCallback(async c => {
+    const { data } = await c.from('media').select('*').order('created_at', { ascending: false });
+    setItems(data || []);
+  }, []);
+  useEffect(() => { if (sb) load(sb); }, [sb]);
+
+  const restore = async m => {
+    const { error } = await sb.from('media').update({ is_hidden: false, reports_count: 0 }).eq('id', m.id);
+    if (error) return toast('Erro ao restaurar');
+    toast('Restaurada'); load(sb);
+  };
+
+  const del = async m => {
+    if (!confirm('Apagar definitivamente esta mídia (banco + storage)?')) return;
+    const r = await sb.storage.from(CFG.BUCKET).remove([m.storage_path]);
+    if (r.error || !r.data || r.data.length === 0) { toast('Falha ao apagar o arquivo do storage'); return; }
+    const { error } = await sb.from('media').delete().eq('id', m.id);
+    if (error) { toast('Arquivo apagado, mas o registro falhou'); return; }
+    toast('Apagada'); load(sb);
+  };
+
+  const downloadZip = async () => {
+    try {
+      setZip('Preparando…');
+      const { default: JSZip } = await import('https://esm.sh/jszip@3.10.1');
+      const z = new JSZip();
+      for (let i = 0; i < items.length; i++) {
+        setZip(`Baixando ${i + 1}/${items.length}`);
+        const m = items[i];
+        const blob = await (await fetch(m.url)).blob();
+        const who = cleanName(m.author_name).replace(/[^\w@.\- ]/g, '_').slice(0, 24);
+        z.file(`${String(i + 1).padStart(4, '0')}_${who}.${m.url.split('.').pop()}`, blob);
+      }
+      setZip('Compactando…');
+      const out = await z.generateAsync({ type: 'blob', compression: 'STORE' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(out); a.download = 'BLCKOUT-31OUT.zip'; a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 8000);
+      setZip('');
+    } catch { setZip(''); toast('Erro ao gerar o ZIP'); }
+  };
+
+  const shown = tab === 'rep' ? items.filter(m => m.reports_count > 0 || m.is_hidden) : items;
+
+  if (!sb) return html`<${Decor}/><div class="center"><${motion.form} class="card" style=${{ width: 'min(92vw,360px)' }} onSubmit=${login} initial=${{ opacity: 0, y: 12 }} animate=${{ opacity: 1, y: 0 }}>
+    <div class="date" style=${{ fontSize: 38, marginTop: 0 }}>ÁREA DO<br/>ORGANIZADOR</div>
+    <label class="l" style=${{ marginTop: 18 }} for="pin">PIN mestre</label>
+    <input id="pin" class="inp pin" type="password" inputmode="numeric" autocomplete="off" maxlength="6" value=${pin} onInput=${e => setPin(e.target.value.replace(/\D/g, '').slice(0, 6))} autofocus />
+    ${err && html`<p class="err">${err}</p>`}
+    <div class="row" style=${{ marginTop: 14 }}><button class="btn" style=${{ flex: 1 }}>Entrar</button><button type="button" class="btn ghost" onClick=${leave}>Voltar</button></div>
+  <//></div>`;
+
+  return html`<${Decor}/><main class="wrap">
+    <div class="row" style=${{ justifyContent: 'space-between', alignItems: 'center', paddingTop: 14 }}>
+      <div class="date" style=${{ fontSize: 34, marginTop: 0 }}>PAINEL BLCKOUT</div>
+      <button class="btn ghost sm" onClick=${leave}>Sair</button>
+    </div>
+    <div class="card">
+      <div class="row" style=${{ alignItems: 'center', justifyContent: 'space-between' }}>
+        <span>${items.length} mídias • ${items.filter(m => m.is_hidden).length} ocultas</span>
+        <button class="btn sm" disabled=${!!zip || !items.length} onClick=${downloadZip}>${zip || '⬇ Baixar tudo em ZIP'}</button>
+      </div>
+      <div class="tabs">
+        <button class=${'btn sm ' + (tab === 'rep' ? '' : 'ghost')} onClick=${() => setTab('rep')}>Denunciadas</button>
+        <button class=${'btn sm ' + (tab === 'all' ? '' : 'ghost')} onClick=${() => setTab('all')}>Todas</button>
+        <button class="btn sm ghost" onClick=${() => load(sb)}>↻</button>
+      </div>
+    </div>
+    ${!shown.length ? html`<div class="empty">Nada por aqui.</div>` : html`<div class="adm-grid">${shown.map(m => html`
+      <div class="adm" key=${m.id}>
+        <div class="th">
+          ${m.type === 'video' ? html`<video src=${m.url + '#t=0.1'} muted playsinline controls preload="metadata"></video>` : html`<img src=${m.url} loading="lazy" alt=""/>`}
+          ${m.reports_count > 0 && html`<span class="badge">⚑ ${m.reports_count}</span>`}
+          ${m.is_hidden && html`<span class="badge h">OCULTA</span>`}
+        </div>
+        <div class="b">
+          <span>${m.author_name}</span>
+          <div class="row" style=${{ gap: 6 }}>
+            ${(m.is_hidden || m.reports_count > 0) && html`<button class="btn ghost sm" onClick=${() => restore(m)}>Restaurar</button>`}
+            <button class="btn danger sm" onClick=${() => del(m)}>Apagar</button>
+          </div>
+        </div>
+      </div>`)}</div>`}
+  </main><${Toast} msg=${msg}/>`;
+}
+
+/* =====================  ROOT  ===================== */
+function App() {
+  const [admin, setAdmin] = useState(location.hash === '#admin');
+  useEffect(() => { const h = () => setAdmin(location.hash === '#admin'); addEventListener('hashchange', h); return () => removeEventListener('hashchange', h); }, []);
+  const goAdmin = () => { location.hash = '#admin'; };
+  const leave = () => { history.replaceState(null, '', location.pathname); setAdmin(false); };
+  return admin ? html`<${Admin} leave=${leave}/>` : html`<${Guest} goAdmin=${goAdmin}/>`;
+}
+
+createRoot(document.getElementById('root')).render(html`<${App}/>`);
+</script>
+</body>
+</html>
